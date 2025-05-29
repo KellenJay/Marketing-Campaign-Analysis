@@ -1,0 +1,55 @@
+/*
+===============================================================================
+Change Over Time Analysis – Marketing Campaigns
+===============================================================================
+Purpose:
+    - To track trends, growth, and changes in campaign metrics over time.
+    - To analyze performance seasonality and ROI evolution.
+    - To measure conversion growth or drop across time periods.
+
+SQL Functions Used:
+    - DATEPART(), DATETRUNC(), FORMAT()
+    - SUM(), COUNT(), AVG()
+===============================================================================
+*/
+
+-- YEAR + MONTH breakdown: Ad performance by month
+SELECT
+    YEAR(Date) AS campaign_year,
+    MONTH(Date) AS campaign_month,
+    SUM(Ad_Spend) AS total_ad_spend,
+    SUM(Revenue) AS total_revenue,
+    SUM(Clicks) AS total_clicks,
+    SUM(Conversions) AS total_conversions,
+    ROUND(AVG(ROI), 1) AS avg_roi,
+    ROUND(AVG(Engagement_Rate), 1) AS avg_engagement
+FROM gold.fact_campaign
+WHERE Date IS NOT NULL
+GROUP BY YEAR(Date), MONTH(Date)
+ORDER BY campaign_year, campaign_month;
+
+-- DATETRUNC() style (if supported): Monthly breakdown
+SELECT
+    DATETRUNC(MONTH, Date) AS campaign_month,
+    SUM(Ad_Spend) AS total_ad_spend,
+    SUM(Revenue) AS total_revenue,
+    SUM(Clicks) AS total_clicks,
+    SUM(Conversions) AS total_conversions,
+    ROUND(AVG(ROAS), 2) AS avg_roas,
+    ROUND(AVG(CPM), 2) AS avg_cpm
+FROM gold.fact_campaign
+WHERE Date IS NOT NULL
+GROUP BY DATETRUNC(MONTH, Date)
+ORDER BY campaign_month;
+
+-- FORMAT() style: Monthly formatted date for reporting visuals
+SELECT
+    FORMAT(Date, 'yyyy-MMM') AS campaign_month,
+    SUM(Ad_Spend) AS total_ad_spend,
+    SUM(Revenue) AS total_revenue,
+    ROUND(AVG(Conversion_Rate), 1) AS avg_conversion_rate,
+    ROUND(AVG(RPCon), 2) AS avg_rpcon
+FROM gold.fact_campaign
+WHERE Date IS NOT NULL
+GROUP BY FORMAT(Date, 'yyyy-MMM')
+ORDER BY FORMAT(Date, 'yyyy-MMM');
