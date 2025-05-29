@@ -1,0 +1,45 @@
+/*
+===============================================================================
+Ranking Analysis – Marketing Campaigns
+===============================================================================
+Purpose:
+    - To rank campaigns, cities, and channels based on marketing performance.
+    - To identify top-performing or underperforming marketing efforts.
+
+SQL Functions Used:
+    - Window Ranking Functions: RANK(), ROW_NUMBER()
+    - Clauses: GROUP BY, ORDER BY, TOP
+===============================================================================
+*/
+
+-- Top Campaign by Revenue
+SELECT
+    Campaign,
+    SUM(Revenue) AS total_revenue
+FROM gold.fact_campaign
+GROUP BY Campaign
+ORDER BY total_revenue DESC;
+
+-- Rank Cities by Total Conversions
+SELECT 
+    City,
+    SUM(Conversions) AS total_conversions,
+    RANK() OVER (ORDER BY SUM(Conversions) DESC) AS city_conversion_rank
+FROM gold.fact_campaign
+GROUP BY City;
+
+-- Rank Channels by ROI
+SELECT 
+    Channel,
+    ROUND(AVG(ROI), 1) AS avg_roi,
+    RANK() OVER (ORDER BY AVG(ROI) DESC) AS roi_rank
+FROM gold.fact_campaign
+GROUP BY Channel;
+
+-- Rank Devices by Engagement Rate
+SELECT 
+    Device,
+    ROUND(AVG(Engagement_Rate), 1) AS avg_engagement_rate,
+    RANK() OVER (ORDER BY AVG(Engagement_Rate) DESC) AS engagement_rank
+FROM gold.fact_campaign
+GROUP BY Device;
