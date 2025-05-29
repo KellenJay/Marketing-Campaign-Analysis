@@ -1,0 +1,37 @@
+/*
+===============================================================================
+Dimensions Exploration – gold.fact_campaign
+===============================================================================
+Purpose:
+    - To explore core categorical dimensions from campaign data.
+    - Helps identify segmentation opportunities by channel, device, region, etc.
+
+SQL Functions Used:
+    - DISTINCT
+    - ORDER BY
+===============================================================================
+*/
+
+-- Explore all active campaign names
+SELECT DISTINCT 
+    Campaign 
+FROM gold.fact_campaign
+ORDER BY Campaign;
+
+-- Explore unique cities where campaigns ran
+SELECT DISTINCT 
+    City 
+FROM gold.fact_campaign
+ORDER BY City;
+
+-- Explore all marketing channels used
+SELECT DISTINCT 
+    Channel 
+FROM gold.fact_campaign
+ORDER BY Channel;
+
+-- Explore devices targeted in the campaigns
+SELECT DISTINCT 
+    Device 
+FROM gold.fact_campaign
+ORDER BY Device;
