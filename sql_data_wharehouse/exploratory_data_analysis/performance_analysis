@@ -1,0 +1,57 @@
+/*
+===============================================================================
+Performance Analysis (Month-over-Month) – Marketing Campaigns
+===============================================================================
+Purpose:
+    - To measure monthly revenue performance of marketing channels.
+    - To benchmark against monthly averages.
+    - To analyze month-over-month trends.
+
+SQL Functions Used:
+    - LAG(), AVG() OVER(): For tracking performance changes.
+    - CASE: For conditional trend labeling.
+===============================================================================
+*/
+
+WITH monthly_channel_performance AS (
+    SELECT
+        FORMAT(Date, 'yyyy-MM') AS campaign_month,
+        Channel,
+        SUM(Revenue) AS total_revenue
+    FROM gold.fact_campaign
+    WHERE Date IS NOT NULL
+    GROUP BY FORMAT(Date, 'yyyy-MM'), Channel
+)
+SELECT
+    campaign_month,
+    Channel,
+    total_revenue,
+
+    -- Monthly average revenue for each channel
+    AVG(total_revenue) OVER (PARTITION BY Channel) AS avg_monthly_revenue,
+
+    -- Difference from average
+    total_revenue - AVG(total_revenue) OVER (PARTITION BY Channel) AS diff_from_avg,
+
+    -- Average comparison trend
+    CASE 
+        WHEN total_revenue > AVG(total_revenue) OVER (PARTITION BY Channel) THEN 'Above Avg'
+        WHEN total_revenue < AVG(total_revenue) OVER (PARTITION BY Channel) THEN 'Below Avg'
+        ELSE 'Avg'
+    END AS avg_trend,
+
+    -- Previous month's revenue
+    LAG(total_revenue) OVER (PARTITION BY Channel ORDER BY campaign_month) AS prior_month_revenue,
+
+    -- Month-over-Month change
+    total_revenue - LAG(total_revenue) OVER (PARTITION BY Channel ORDER BY campaign_month) AS diff_from_prior_month,
+
+    -- MoM Trend
+    CASE 
+        WHEN total_revenue > LAG(total_revenue) OVER (PARTITION BY Channel ORDER BY campaign_month) THEN 'Increase'
+        WHEN total_revenue < LAG(total_revenue) OVER (PARTITION BY Channel ORDER BY campaign_month) THEN 'Decrease'
+        ELSE 'No Change'
+    END AS mom_trend
+
+FROM monthly_channel_performance
+ORDER BY Channel, campaign_month;
