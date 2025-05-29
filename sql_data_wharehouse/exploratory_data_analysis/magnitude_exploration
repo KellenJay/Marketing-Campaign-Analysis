@@ -77,3 +77,19 @@ SELECT
 FROM gold.fact_campaign
 GROUP BY Device
 ORDER BY avg_engagement_rate DESC;
+
+-- Ads per Clicks
+SELECT
+    Ad,
+    SUM(Clicks) AS total_clicks
+FROM gold.fact_campaign
+GROUP BY Ad
+ORDER BY total_clicks DESC;
+
+-- Campaigns by ROAS (Return on Ad Spend)
+SELECT TOP 3
+    Campaign,
+    ROUND(AVG(ROAS), 2) AS avg_roas
+FROM gold.fact_campaign
+GROUP BY Campaign
+ORDER BY avg_roas ASC;
