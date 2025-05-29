@@ -1,0 +1,36 @@
+/*
+===============================================================================
+DDL Script: Create Silver Tables
+===============================================================================
+Script Purpose:
+    This script creates tables in the 'silver' schema, dropping existing tables 
+    if they already exist.
+	  Run this script to re-define the DDL structure of 'bronze' Tables
+===============================================================================
+*/
+IF OBJECT_ID('silver.marketing_campaign', 'U') IS NOT NULL
+    DROP TABLE silver.marketing_campaign;
+GO
+
+CREATE TABLE silver.marketing_campaign (
+    Campaign               NVARCHAR(255),
+    Date            	   DATE,
+    City                   NVARCHAR(255),
+    Latitude               FLOAT,
+    Longitude              FLOAT,
+    Channel                NVARCHAR(100),
+    Device                 NVARCHAR(100),
+    Ad	                   NVARCHAR(255),
+    Impressions            INT,         -- cleaned & formatted to number (no decimals)
+    CTR                    FLOAT,       -- cleaned: formatted from % to decimal (e.g. 0.02)
+    Clicks                 INT,
+    CPC		           FLOAT,
+    Ad_Spend               FLOAT,       -- renamed from "Spend, GBP"
+    Conversions            INT,
+    Revenue                FLOAT,       -- renamed from "Total conversion value, GBP"
+    Likes                  INT,         -- renamed from "Likes (Reactions)"
+    Shares                 INT,
+    Comments               INT,
+    DWH_Create_Date        DATETIME2 DEFAULT GETDATE()
+);
+GO
