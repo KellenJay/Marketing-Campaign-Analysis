@@ -1,0 +1,76 @@
+/*
+===============================================================================
+Data Segmentation Analysis – Marketing Campaigns
+===============================================================================
+Purpose:
+    - To group campaign performance into meaningful performance bands.
+    - For segmenting ads, spend tiers, and engagement effectiveness.
+    - Supports audience targeting and strategic planning.
+
+SQL Functions Used:
+    - CASE: Defines custom segmentation logic.
+    - GROUP BY: Groups data into performance bands.
+===============================================================================
+*/
+
+-- Segment Campaigns Based on Spend Levels
+WITH spend_segments AS (
+    SELECT
+        campaign_fact_id,
+        Campaign,
+        Channel,
+        Ad_Spend,
+        CASE 
+            WHEN Ad_Spend < 100 THEN 'Low Budget'
+            WHEN Ad_Spend BETWEEN 100 AND 500 THEN 'Mid Budget'
+            WHEN Ad_Spend BETWEEN 500 AND 1000 THEN 'High Budget'
+            ELSE 'Premium Budget'
+        END AS spend_band
+    FROM gold.fact_campaign
+)
+SELECT 
+    spend_band,
+    COUNT(campaign_fact_id) AS total_campaigns
+FROM spend_segments
+GROUP BY spend_band
+ORDER BY total_campaigns DESC;
+
+-- Segment Campaigns Based on Engagement Rate
+WITH engagement_segments AS (
+    SELECT
+        campaign_fact_id,
+        Engagement_Rate,
+        CASE 
+            WHEN Engagement_Rate < 2 THEN 'Low Engagement'
+            WHEN Engagement_Rate BETWEEN 2 AND 5 THEN 'Moderate Engagement'
+            WHEN Engagement_Rate BETWEEN 5 AND 10 THEN 'High Engagement'
+            ELSE 'Viral'
+        END AS engagement_segment
+    FROM gold.fact_campaign
+)
+SELECT 
+    engagement_segment,
+    COUNT(campaign_fact_id) AS total_campaigns
+FROM engagement_segments
+GROUP BY engagement_segment
+ORDER BY total_campaigns DESC;
+
+-- Segment Campaigns by ROI Bands
+WITH roi_segments AS (
+    SELECT
+        campaign_fact_id,
+        ROI,
+        CASE 
+            WHEN ROI < 0 THEN 'Negative ROI'
+            WHEN ROI BETWEEN 0 AND 50 THEN 'Low ROI'
+            WHEN ROI BETWEEN 50 AND 150 THEN 'Moderate ROI'
+            ELSE 'High ROI'
+        END AS roi_band
+    FROM gold.fact_campaign
+)
+SELECT 
+    roi_band,
+    COUNT(campaign_fact_id) AS total_campaigns
+FROM roi_segments
+GROUP BY roi_band
+ORDER BY total_campaigns DESC;
