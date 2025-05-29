@@ -1,0 +1,19 @@
+/*
+===============================================================================
+Date Range Exploration – gold.fact_campaign
+===============================================================================
+Purpose:
+    - Understand the historical scope of the campaign data.
+    - Determine how many months of performance can be analyzed.
+
+SQL Functions Used:
+    - MIN(), MAX(), DATEDIFF()
+===============================================================================
+*/
+
+-- Determine the start and end of campaign activity
+SELECT 
+    MIN(Date) AS First_Campaign_Date,
+    MAX(Date) AS Last_Campaign_Date,
+    DATEDIFF(MONTH, MIN(Date), MAX(Date)) AS Total_Campaign_Duration_Months
+FROM gold.fact_campaign;
