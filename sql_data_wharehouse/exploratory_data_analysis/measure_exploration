@@ -1,0 +1,62 @@
+/*
+===============================================================================
+Measures Exploration (Key Marketing KPIs)
+===============================================================================
+Purpose:
+    - To calculate aggregate marketing metrics (e.g., total spend, total clicks).
+    - To identify overall performance trends and optimization opportunities.
+
+SQL Functions Used:
+    - COUNT(), SUM(), AVG(), ROUND()
+===============================================================================
+*/
+
+-- Total Ad Spend
+SELECT SUM(Ad_Spend) AS Total_Ad_Spend FROM gold.fact_campaign;
+
+-- Total Revenue Generated
+SELECT ROUND(SUM(Revenue), 0) AS Total_Revenue FROM gold.fact_campaign;
+-- Total Conversions
+SELECT SUM(Conversions) AS Total_Conversions FROM gold.fact_campaign;
+
+-- Total Clicks
+SELECT SUM(Clicks) AS Total_Clicks FROM gold.fact_campaign;
+
+-- Total Impressions
+SELECT SUM(Impressions) AS Total_Impressions FROM gold.fact_campaign;
+
+-- Total Likes, Shares, Comments
+SELECT 
+    SUM(Likes) AS Total_Likes,
+    SUM(Shares) AS Total_Shares,
+    SUM(Comments) AS Total_Comments
+FROM gold.fact_campaign;
+
+-- Average ROI Across All Campaigns
+SELECT ROUND(AVG(ROI), 1) AS Avg_ROI FROM gold.fact_campaign;
+
+-- Average Engagement Rate Across All Campaigns
+SELECT ROUND(AVG(Engagement_Rate), 1) AS Avg_Engagement_Rate FROM gold.fact_campaign;
+
+-- Overall Campaign Health
+SELECT 
+    Performance_Flag,
+    COUNT(*) AS Number_of_Campaigns
+FROM gold.fact_campaign
+GROUP BY Performance_Flag;
+
+-- Summary Report of All Core Metrics
+SELECT 'Total Ad Spend' AS metric_name, SUM(Ad_Spend) AS metric_value FROM gold.fact_campaign
+UNION ALL
+SELECT 'Total Revenue', ROUND(SUM(Revenue), 0) FROM gold.fact_campaign
+UNION ALL
+SELECT 'Total Conversions', SUM(Conversions) FROM gold.fact_campaign
+UNION ALL
+SELECT 'Total Clicks', SUM(Clicks) FROM gold.fact_campaign
+UNION ALL
+SELECT 'Total Impressions', SUM(Impressions) FROM gold.fact_campaign
+UNION ALL
+SELECT 'Average ROI', ROUND(AVG(ROI), 1) FROM gold.fact_campaign
+UNION ALL
+SELECT 'Average Engagement Rate', ROUND(AVG(Engagement_Rate), 1) FROM gold.fact_campaign;
+
