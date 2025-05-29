@@ -1,0 +1,79 @@
+/*
+===============================================================================
+Magnitude Analysis – Marketing Campaigns
+===============================================================================
+Purpose:
+    - To quantify campaign outcomes and group results by key business dimensions.
+    - To identify top-performing categories, platforms, and geographic hotspots.
+
+SQL Functions Used:
+    - Aggregate Functions: SUM(), COUNT(), AVG()
+    - GROUP BY, ORDER BY
+===============================================================================
+*/
+
+-- Total Ad Spend by Channel
+SELECT
+    Channel,
+    SUM(Ad_Spend) AS total_ad_spend
+FROM gold.fact_campaign
+GROUP BY Channel
+ORDER BY total_ad_spend DESC;
+
+-- Total Revenue by Device Type
+SELECT
+    Device,
+    ROUND(SUM(Revenue), 2) AS total_revenue
+FROM gold.fact_campaign
+GROUP BY Device
+ORDER BY total_revenue DESC;
+
+-- Total Conversions by City
+SELECT
+    City,
+    SUM(Conversions) AS total_conversions
+FROM gold.fact_campaign
+GROUP BY City
+ORDER BY total_conversions DESC;
+
+-- Total Clicks by Campaign
+SELECT
+    Campaign,
+    SUM(Clicks) AS total_clicks
+FROM gold.fact_campaign
+GROUP BY Campaign
+ORDER BY total_clicks DESC;
+
+-- Average ROI by Channel
+SELECT
+    Channel,
+    ROUND(AVG(ROI), 1) AS avg_roi
+FROM gold.fact_campaign
+GROUP BY Channel
+ORDER BY avg_roi DESC;
+
+-- Revenue by Performance Flag (Healthy vs Loss-Making)
+SELECT
+    Performance_Flag,
+    ROUND(SUM(Revenue), 2) AS total_revenue
+FROM gold.fact_campaign
+GROUP BY Performance_Flag
+ORDER BY total_revenue DESC;
+
+-- Total Likes, Shares, Comments by Channel
+SELECT
+    Channel,
+    SUM(Likes) AS total_likes,
+    SUM(Shares) AS total_shares,
+    SUM(Comments) AS total_comments
+FROM gold.fact_campaign
+GROUP BY Channel
+ORDER BY total_likes DESC;
+
+-- Average Engagement Rate by Device
+SELECT
+    Device,
+    ROUND(AVG(Engagement_Rate), 1) AS avg_engagement_rate
+FROM gold.fact_campaign
+GROUP BY Device
+ORDER BY avg_engagement_rate DESC;
