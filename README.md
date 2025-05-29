@@ -1,54 +1,69 @@
-# 📊 Marketing Campaign Performance Analysis
+# Marketing Campaign Performance Analysis
 
-This project analyzes marketing campaign performance data to identify underperforming ads, optimize channel strategy, and derive actionable business insights.
+This project analyzes marketing campaign performance data to identify underperforming ads, optimize channel strategy, and generate actionable business insights using a full-stack data analytics approach.
 
-🔧 **Tools Used:**  
-- **Microsoft Excel:** Initial data exploration, cleaning, pivot reporting, and KPI prototyping.  
-- **SQL (T-SQL):** End-to-end EDA (Exploratory Data Analysis), KPI calculations, segmentation logic, time-based trend analysis, and final view/report generation using structured queries.
-
----
-
-## 🧠 Project Objectives
-
-- Explore marketing campaign data across multiple dimensions (channel, city, device, etc.)
-- Calculate business KPIs such as **CTR, CPC, ROAS, ROI, Conversion Rate, RPC**, and more.
-- Segment performance by customer behavior and geographic targeting.
-- Build a **Gold Layer fact view and report** using SQL for dashboard integration.
-- Compare yearly channel revenue trends using **YoY analysis** and **window functions**.
+ **Tools Used:**  
+- **SQL (T-SQL):** End-to-end data modeling, EDA, KPI development, reporting logic, and trend analysis.  
+- **Microsoft Excel:** Initial data cleaning, pivot reporting, KPI prototyping, and exploratory comparisons.
 
 ---
 
-## 🗂️ Key SQL EDA Topics Covered
+## Data Architecture
 
-- ✅ **Dimensions Exploration:** Extracting unique channel, city, and ad variants.
-- 📅 **Date Range Analysis:** Identifying historical span and seasonal patterns.
-- 📏 **Magnitude & Aggregates:** Calculating total clicks, revenue, and ad spend.
-- 🏆 **Ranking:** Finding top-performing ads and cities based on ROI.
-- 📈 **Change Over Time:** Monthly revenue trends using `DATETRUNC()` and `FORMAT()`.
-- 🔁 **Running Totals & Moving Averages:** Trend tracking using `OVER()` window functions.
-- 📊 **Part-to-Whole Analysis:** Channel contribution to total revenue.
-- 🔍 **Segmentation:** Customer and product-based segmentation for strategic insights.
-- 📉 **Performance Flags:** Identifying loss-making campaigns for corrective action.
+This project features a **modular data warehouse** built using the **Medallion Architecture** (Bronze → Silver → Gold), including:
 
----
+- **Bronze Layer:** Raw ingestion tables from marketing sources.
+- **Silver Layer:** Cleaned and enriched campaign data (`silver.marketing_campaign`).
+- **Gold Layer:** Final analytical views and reports for BI tools:
+  - `gold.fact_campaign` (fact view with calculated KPIs)
+  - `gold.report_campaigns` (executive performance report)
 
-## 🧾 Project Structure
-
-- `sql_scripts/`: All SQL EDA, metrics calculation, and reporting scripts.
-- `excel_reports/`: Pivot tables and performance dashboards.
-- `gold_views/`: Final SQL scripts for `gold.fact_campaign` and `gold.report_campaigns`.
+Developed using:
+- **Stored Procedures** for repeatable transformation logic.
+- **Views** for analytical presentation.
+- **Surrogate Keys** via `ROW_NUMBER()` for fact table identity.
 
 ---
 
-## 🔗 Project Portfolio
+## Project Objectives
 
-- 📘 [Project Summary & Dashboard](https://www.notion.so/Marketing-Campaign-Analysis-19968abd1c54802daca2cfeb3b5a4106)
-- 📎 [Detailed SQL Report Walkthrough](https://www.notion.so/Detailed-Report-For-More-Information-19968abd1c5481ce9282d4c1925795a4)
+- Explore marketing performance across campaigns, cities, devices, and channels.
+- Build reusable KPIs: **CTR, CPC, CPM, ROAS, RPC, ROI, Conversion Rate, Engagement Rate**.
+- Perform segmentation analysis, profitability flagging, and performance benchmarking.
+- Conduct **MoM growth tracking** and build **data-rich reports** for strategic decision-making.
 
 ---
 
-## 📌 Outcome
+## Key SQL EDA Topics Covered
 
-This project demonstrates the power of **structured data exploration using SQL** alongside **interactive visual analysis in Excel**—enabling stakeholders to make smarter decisions about **ad strategy, audience targeting, and budget optimization**.
+-  **Dimension Exploration:** Unique channel, ad, device, and city combinations.
+-  **Date Range Analysis:** Temporal boundaries and campaign lifespan.
+-  **Magnitude Analysis:** Totals for clicks, impressions, conversions, and revenue.
+-  **Ranking:** Best and worst performing ads, products, and locations.
+-  **Change Over Time:** Monthly revenue growth and customer engagement trends.
+-  **Part-to-Whole Analysis:** Channel contribution to overall campaign ROI.
+-  **Segmentation Logic:** Categorizing campaigns and cities for optimization.
+-  **Performance Flagging:** Identifying loss-making campaigns.
+
+---
+
+## Project Structure
+
+- `sql_scripts/`: All EDA queries, KPI calculations, and reporting logic.
+- `warehouse_views/`: DDL for `gold.fact_campaign` and `gold.report_campaigns`.
+- `stored_procedures/`: Modular procedure logic for ETL tasks.
+- `excel_reports/`: Early-stage exploratory analysis and KPI dashboards.
+
+---
+
+## Outcome
+
+This project demonstrates how to structure a **full-stack analytics solution**:
+- From raw marketing data to a clean data warehouse,
+- From KPI modeling to SQL-based reporting,
+- From Excel exploration to BI dashboard readiness.
+
+It highlights **best practices in SQL development, data warehousing, and marketing performance analysis**.
+
 
 
