@@ -1,0 +1,62 @@
+/*
+===============================================================================
+Part-to-Whole Analysis – Marketing Campaigns
+===============================================================================
+Purpose:
+    - To evaluate how individual campaign dimensions contribute to overall performance.
+    - Helps identify key drivers and underperforming segments.
+    - Supports budget allocation and targeting decisions.
+
+SQL Functions Used:
+    - SUM(), AVG(): Aggregates values for comparison.
+    - Window Functions: SUM() OVER() for total calculations.
+===============================================================================
+*/
+
+-- Which marketing channels contribute the most to overall revenue?
+WITH channel_revenue AS (
+    SELECT
+        Channel,
+        ROUND(SUM(Revenue), 2) AS total_revenue
+    FROM gold.fact_campaign
+    GROUP BY Channel
+)
+SELECT
+    Channel,
+    total_revenue,
+    SUM(total_revenue) OVER () AS overall_revenue,
+    ROUND((CAST(total_revenue AS FLOAT) / SUM(total_revenue) OVER ()) * 100, 2) AS percentage_of_total
+FROM channel_revenue
+ORDER BY total_revenue DESC;
+
+-- Which devices contributed the most to total ad spend?
+WITH device_spend AS (
+    SELECT
+        Device,
+        SUM(Ad_Spend) AS total_spend
+    FROM gold.fact_campaign
+    GROUP BY Device
+)
+SELECT
+    Device,
+    total_spend,
+    SUM(total_spend) OVER () AS overall_spend,
+    ROUND((CAST(total_spend AS FLOAT) / SUM(total_spend) OVER ()) * 100, 2) AS percentage_of_total
+FROM device_spend
+ORDER BY total_spend DESC;
+
+-- Which cities generated the highest share of total conversions?
+WITH city_conversions AS (
+    SELECT
+        City,
+        SUM(Conversions) AS total_conversions
+    FROM gold.fact_campaign
+    GROUP BY City
+)
+SELECT
+    City,
+    total_conversions,
+    SUM(total_conversions) OVER () AS overall_conversions,
+    ROUND((CAST(total_conversions AS FLOAT) / SUM(total_conversions) OVER ()) * 100, 2) AS percentage_of_total
+FROM city_conversions
+ORDER BY total_conversions DESC;
