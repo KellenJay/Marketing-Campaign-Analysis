@@ -1,0 +1,79 @@
+/*
+===============================================================================
+Campaign Performance Report – gold.report_campaigns
+===============================================================================
+Purpose:
+    - Consolidates marketing campaign metrics for analysis and decision-making.
+===============================================================================
+*/
+
+-- =============================================================================
+-- Create View: gold.report_campaigns
+-- =============================================================================
+IF OBJECT_ID('gold.report_campaigns', 'V') IS NOT NULL
+    DROP VIEW gold.report_campaigns;
+GO
+
+CREATE VIEW gold.report_campaigns AS
+
+WITH base_campaign_data AS (
+    SELECT
+        campaign_fact_id,
+        Campaign,
+        Date,
+        DATENAME(month, Date) AS Month_Name,
+        YEAR(Date) AS Campaign_Year,
+        City,
+        Channel,
+        Device,
+        Ad,
+        Impressions,
+        Clicks,
+        Conversions,
+        Likes,
+        Shares,
+        Comments,
+        Ad_Spend,
+        Revenue
+    FROM gold.fact_campaign
+    WHERE Date IS NOT NULL
+)
+
+SELECT
+    campaign_fact_id,
+    Campaign,
+    Campaign_Year,
+    Month_Name,
+    City,
+    Channel,
+    Device,
+    Ad,
+
+    Impressions,
+    Clicks,
+    Conversions,
+    Revenue,
+    Ad_Spend,
+    Likes + Shares + Comments AS Total_Engagements,
+
+    -- KPIs
+    ROUND(CASE WHEN Impressions = 0 THEN 0 ELSE Clicks * 100.0 / Impressions END, 2) AS CTR,
+    ROUND(CASE WHEN Clicks = 0 THEN 0 ELSE Ad_Spend / Clicks END, 2) AS CPC,
+    ROUND(CASE WHEN Clicks = 0 THEN 0 ELSE Conversions * 100.0 / Clicks END, 2) AS Conversion_Rate,
+    ROUND(CASE WHEN Clicks = 0 THEN 0 ELSE Revenue / Clicks END, 2) AS RPC,
+    ROUND(CASE WHEN Conversions = 0 THEN 0 ELSE Revenue / Conversions END, 2) AS RPCon,
+    ROUND(CASE WHEN Impressions = 0 THEN 0 ELSE (Likes + Shares + Comments) * 100.0 / Impressions END, 2) AS Engagement_Rate,
+
+    -- Financial KPIs
+    ROUND(Revenue - Ad_Spend, 2) AS Profit,
+    ROUND(CASE WHEN Ad_Spend = 0 THEN 0 ELSE Revenue / Ad_Spend END, 2) AS ROAS,
+    ROUND(CASE WHEN Ad_Spend = 0 THEN 0 ELSE (Revenue - Ad_Spend) * 100.0 / Ad_Spend END, 2) AS ROI,
+
+    -- Performance Flag
+    CASE 
+        WHEN Conversions > 0 AND Revenue < Ad_Spend THEN 'Loss-Making'
+        ELSE 'Healthy'
+    END AS Performance_Status
+
+FROM base_campaign_data;
+GO
