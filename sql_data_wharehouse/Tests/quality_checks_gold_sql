@@ -61,12 +61,21 @@ WHERE
     ROUND(Profit, 2) != ROUND(Revenue - Ad_Spend, 2);
 
 -- ============================================================
--- Check for cases where conversions exist but revenue is missing or zero
--- Expectation: Revenue should be > 0 if conversions > 0
-SELECT *
+-- Insight Check: Conversions with zero revenue
+-- Business Interpretation: Low or no-value conversions; may indicate poor ROI campaigns
+SELECT 
+    Campaign,
+    Date,
+    Channel,
+    Ad,
+    Conversions,
+    Revenue,
+    ROI,
+    Performance_Flag
 FROM gold.fact_campaign
 WHERE 
-    Conversions > 0 AND Revenue <= 0;
+    Conversions > 0 AND Revenue = 0
+ORDER BY Date;
 
 -- ============================================================
 -- Optional sanity: Check for CTR values over 1 (should be a proportion)
