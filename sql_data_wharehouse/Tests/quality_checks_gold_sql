@@ -1,0 +1,84 @@
+/*
+===============================================================================
+Quality Checks for Gold Layer: fact_campaign
+===============================================================================
+Script Purpose:
+    This script validates key KPIs and logic in 'gold.fact_campaign' to ensure
+    consistency, accuracy, and readiness for analytical reporting.
+
+    Checks include:
+    - Business key nulls and granularity
+    - Metric validity and derived KPI sanity
+    - ROI, Conversion Rate, and Profit logic alignment
+
+Usage Notes:
+    - Run after each Gold Layer load.
+    - Any failed checks should be flagged before refreshing reports or dashboards.
+===============================================================================
+*/
+
+-- ============================================================
+-- Check for NULLs in critical columns
+-- Expectation: Key fields and calculated metrics must not be NULL
+SELECT *
+FROM gold.fact_campaign
+WHERE 
+    Campaign IS NULL OR
+    Date IS NULL OR
+    City IS NULL OR
+    Ad IS NULL OR
+    Ad_Spend IS NULL OR
+    Revenue IS NULL OR
+    Conversions IS NULL;
+
+-- ============================================================
+-- Check for duplicate records (Campaign + Date + City)
+-- Expectation: One row per Campaign-Date-City combination
+SELECT 
+    Campaign,
+    Date,
+    City,
+    COUNT(*) AS record_count
+FROM gold.fact_campaign
+GROUP BY Campaign, Date, City
+HAVING COUNT(*) > 1;
+
+-- ============================================================
+-- Validate metric bounds for key KPIs
+-- Conversion Rate should be 0–100%, Engagement Rate 0–100%, ROI ≥ -100%
+SELECT *
+FROM gold.fact_campaign
+WHERE 
+    Conversion_Rate < 0 OR Conversion_Rate > 100 OR
+    Engagement_Rate < 0 OR Engagement_Rate > 100 OR
+    ROI < -100;
+
+-- ============================================================
+-- Ensure Profit = Revenue - Ad_Spend
+SELECT *
+FROM gold.fact_campaign
+WHERE 
+    ROUND(Profit, 2) != ROUND(Revenue - Ad_Spend, 2);
+
+-- ============================================================
+-- Check for cases where conversions exist but revenue is missing or zero
+-- Expectation: Revenue should be > 0 if conversions > 0
+SELECT *
+FROM gold.fact_campaign
+WHERE 
+    Conversions > 0 AND Revenue <= 0;
+
+-- ============================================================
+-- Optional sanity: Check for CTR values over 1 (should be a proportion)
+SELECT *
+FROM gold.fact_campaign
+WHERE CTR > 1;
+
+-- ============================================================
+-- Validate performance flag logic (flag as 'Loss-Making' only if Profit < 0)
+SELECT *
+FROM gold.fact_campaign
+WHERE 
+    Profit >= 0 AND Performance_Flag = 'Loss-Making'
+    OR
+    Profit < 0 AND Performance_Flag = 'Healthy';
