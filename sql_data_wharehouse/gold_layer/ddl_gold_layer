@@ -23,7 +23,7 @@ GO
 
 CREATE VIEW gold.fact_campaign AS
 SELECT
-    ROW_NUMBER() OVER (ORDER BY Campaign, Date, City) AS campaign_fact_id,  -- Surrogate key
+    ROW_NUMBER() OVER (ORDER BY Campaign, Date, City) AS Campaign_Fact_ID,  -- Surrogate key
     Campaign,
     Date,
     City,
